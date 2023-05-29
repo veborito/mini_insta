@@ -1,0 +1,20 @@
+# Faire un environnement local d'install pour les packages
+
+python3 -m venv venv
+
+source venv/bin/activate
+
+
+# pip install flask and co
+
+pip install -r requirements.txt
+
+#initialiser DB
+
+flask db init
+flask db migrate -m "commentaire"
+flask db upgrade
+
+# lancer le programme
+
+./run.sh
