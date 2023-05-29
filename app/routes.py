@@ -83,9 +83,9 @@ def delete_comment(comment_id):
     db.session.commit()
     return redirect(url_for('index'))
 
-# @app.route('/delete-photo/<int:photo_id>', methods=['POST'])
-# def delete_comment(comment_id):
-#     comment = Comment.query.get_or_404(comment_id)
-#     db.session.delete(comment)
-#     db.session.commit()
-#     return redirect(url_for('index'))
+@app.route('/delete-photo/<int:photo_id>', methods=['POST'])
+def delete_photo(photo_id):
+    photo = Photo.query.get_or_404(photo_id)
+    db.session.delete(photo)
+    db.session.commit()
+    return redirect(url_for('user', username=current_user.username))

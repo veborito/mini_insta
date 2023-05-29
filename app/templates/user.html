@@ -1,24 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<h1>User: {{ user.username }}</h1>
+	<br/>
+	<h1>Profile of {{ user.username }}</h1>
 	<hr/>
-	<form action="" method="post" enctype="multipart/form-data">
-		{{ form.hidden_tag() }}
-		{{ form.photo() }}
-		{% for error in form.photo.errors %}
-		<span class="text-danger">{{ error }}</span>
-		{% endfor %}
-		{{ form.submit() }}
-	</form>
 	<h3>All Posts</h3>
 	<div class="container">
 		<div class="row">
-		{% for photo in photos %}
-			<div class="col-sm-2 col-md-3 col-lg-4">
-				<img class="img-thumbnail" src="{{ photo.name }}" style="width: 400px;height: 400px;">
+			{% for photo in photos %}
+				<div class="col-sm-2 col-md-3 col-lg-4">
+					<img class="img-thumbnail" src="{{ photo.name }}" style="width: 400px;height: 400px;">
+					<form action="{{ url_for('delete_photo', photo_id=photo.id) }}" method="post">
+						<button class="btn btn-danger" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+							<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+							<path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+						</svg></button>
+					</form>
+				</div>
+			{% endfor %}
+			<div class="mx-auto">
+			<br/>
+				<form action="" method="post" enctype="multipart/form-data">
+					{{ form.hidden_tag() }}
+					{{ form.photo() }}
+					{% for error in form.photo.errors %}
+					<span class="text-danger">{{ error }}</span>
+					{% endfor %}
+					{{ form.submit(class="btn btn-primary") }}
+				</form>
+			<br/>
 			</div>
-		{% endfor %}
 		</div>
 	</div>
 {% endblock %}
