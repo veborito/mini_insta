@@ -1,8 +1,7 @@
-from app  import db, login
+from app import db, login
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -10,6 +9,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    photos = db.relationship('Photo', backref='author', lazy='dynamic')
         
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -25,9 +25,19 @@ class Comment(db.Model):
     text = db.Column(db.String(200))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
     
     def __repr__(self):
         return f"Comment - {self.text}"
+
+class Photo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(500))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    comments = db.relationship('Comment', backref='photo', lazy='dynamic') 
+            
+    def __repr__(self):
+        return f"path to photo - {self.name}"
 
 @login.user_loader
 def load_user(id):

@@ -1,28 +1,30 @@
 from flask import render_template, redirect, url_for, flash, request
-from app import app, db
-from app.forms import LoginForm, RegistrationForm
-from app.models import User
+from app import app, db, images
+from app.forms import LoginForm, RegistrationForm, UploadForm, CommentForm
+from app.models import User, Comment, Photo
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
+import os
 
 @app.route('/')
 def home():
     return redirect(url_for('login'))
 
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = [
-		{
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-	]
-    return render_template("index.html", title='Home', comments=posts)
+    form = CommentForm()
+    if form.validate_on_submit():
+        photo_id = request.form['photo_id']
+        photo = Photo.query.filter_by(id=photo_id).first()
+        comment = Comment(text=form.comment.data, author=current_user, photo=photo)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Nice comment bro !')
+        return redirect(url_for('index'))
+    photos = Photo.query.all()
+    return render_template("index.html", title='Home', photos=photos, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -60,12 +62,16 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-@app.route('/user/<username>')
+@app.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    comments = [
-		{'author': user, 'body': 'Test post #1'},
-		{'author': user, 'body': 'Test post #2'}
-	]
-    return render_template('user.html', user=user, comments=comments)
+    form = UploadForm()
+    if form.validate_on_submit():
+        image_name = images.save(form.photo.data)
+        file_url = url_for('static', filename='uploads/' + image_name)
+        photo = Photo(name=file_url, author=current_user)
+        db.session.add(photo)
+        db.session.commit()
+    photos = Photo.query.filter_by(user_id=current_user.id).all()
+    return render_template('user.html', user=user, form=form, photos=photos)

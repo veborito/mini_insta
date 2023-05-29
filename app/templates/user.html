@@ -3,9 +3,22 @@
 {% block content %}
 	<h1>User: {{ user.username }}</h1>
 	<hr/>
-	{% for comment in comments %}
-	<p>
-		{{ comment.author.username }} says: <b>{{ comment.body }}</b>
-	</p>
-	{% endfor %}
+	<form action="" method="post" enctype="multipart/form-data">
+		{{ form.hidden_tag() }}
+		{{ form.photo() }}
+		{% for error in form.photo.errors %}
+		<span class="text-danger">{{ error }}</span>
+		{% endfor %}
+		{{ form.submit() }}
+	</form>
+	<h3>All Posts</h3>
+	<div class="container">
+		<div class="row">
+		{% for photo in photos %}
+			<div class="col-sm-2 col-md-3 col-lg-4">
+				<img class="img-thumbnail" src="{{ photo.name }}" style="width: 400px;height: 400px;">
+			</div>
+		{% endfor %}
+		</div>
+	</div>
 {% endblock %}
