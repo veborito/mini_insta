@@ -75,3 +75,17 @@ def user(username):
         db.session.commit()
     photos = Photo.query.filter_by(user_id=current_user.id).all()
     return render_template('user.html', user=user, form=form, photos=photos)
+
+@app.route('/delete-comment/<int:comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+# @app.route('/delete-photo/<int:photo_id>', methods=['POST'])
+# def delete_comment(comment_id):
+#     comment = Comment.query.get_or_404(comment_id)
+#     db.session.delete(comment)
+#     db.session.commit()
+#     return redirect(url_for('index'))
