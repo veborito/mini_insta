@@ -4,8 +4,6 @@ from app.forms import LoginForm, RegistrationForm, UploadForm, CommentForm
 from app.models import User, Comment, Photo
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
-from werkzeug.utils import secure_filename
-import os
 
 @app.route('/')
 def home():
